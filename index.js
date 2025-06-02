@@ -12,7 +12,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5001'], // Add your frontend URLs
+  origin: ['http://localhost:3000', 'http://localhost:5001','http://0.0.0.0:4000','https://beuaty-styles.vercel.app/'], // Add your frontend URLs
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -38,7 +38,9 @@ app.use((req, res, next) => {
 });
 
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 4000;
+
+// port = process.env.PORT || 5001
 
   mongoose.connect(process.env.MONGO_URI)
   .then(() => {
