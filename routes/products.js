@@ -26,10 +26,10 @@ router.get('/:id', async (req, res) => {
 
 // Create product (admin protected)
 router.post('/', authMiddleware, async (req, res) => {
-  const { name, category, subcategory, description, price, attributes } = req.body;
+  const { name, category, subcategory, description, price, attributes,productImage } = req.body;
 
   try {
-    const newProduct = new Product({ name, category, subcategory, description, price, attributes });
+    const newProduct = new Product({ name, category, subcategory, description, price, attributes,productImage });
     await newProduct.save();
     res.status(201).json(newProduct);
   } catch (err) {

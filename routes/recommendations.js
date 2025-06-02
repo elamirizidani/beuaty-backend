@@ -17,13 +17,10 @@ function countCommonProducts(purchasesA, purchasesB) {
 }
 
 // Content-Based Recommendation: by user's hairType preference
-router.get('/content-based/:userId', authMiddleware, async (req, res) => {
+router.get('/content-based', authMiddleware, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId) {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-
-    const user = await User.findById(req.params.userId);
+    const userId = req.user.id;
+    const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const userHairType = user.preferences?.hairType;
@@ -41,13 +38,11 @@ router.get('/content-based/:userId', authMiddleware, async (req, res) => {
 });
 
 // Collaborative Filtering Recommendation: simple user similarity on purchase history
-router.get('/collaborative/:userId', authMiddleware, async (req, res) => {
+router.get('/collaborative', authMiddleware, async (req, res) => {
   try {
-    if (req.user.id !== req.params.userId) {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
 
-    const currentUser = await User.findById(req.params.userId).populate('purchaseHistory.productId');
+    const userId = req.user.id;
+    const currentUser = await User.findById(userId).populate('purchaseHistory.productId');
     if (!currentUser) return res.status(404).json({ message: 'User not found' });
 
     // All other users (limit for performance)

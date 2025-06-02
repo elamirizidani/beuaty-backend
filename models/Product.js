@@ -13,6 +13,7 @@ const productSchema = new mongoose.Schema({
   subcategory: String,
   description: String,
   price: Number,
+  productImage:String,
   attributes: {
     hairType: [String],
     skinType: [String],

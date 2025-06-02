@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
     priceRange: { min: Number, max: Number }
   },
   purchaseHistory: [{ productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, date: Date, quantity: Number }],
+  cart: [{
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    quantity: { type: Number, default: 1 },
+    addedAt: { type: Date, default: Date.now }
+  }],
   interactionHistory: [interactionSchema],
   purchaseHistory: [{
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
