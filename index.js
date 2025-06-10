@@ -12,7 +12,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: ['http://localhost:5173','http://localhost:3000', 'http://localhost:5001','http://0.0.0.0:4000','https://beuaty-styles.vercel.app/'], // Add your frontend URLs
+  origin: ['http://localhost:5173','http://localhost:3000', 'http://localhost:5001','http://0.0.0.0:4000','https://beuaty-styles.vercel.app'], // Add your frontend URLs
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
