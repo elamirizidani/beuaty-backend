@@ -7,6 +7,8 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const productRoutes = require('./routes/products');
 const recommendationRoutes = require('./routes/recommendations');
+const bookingRoutes = require('./routes/booking');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -29,6 +31,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/bookings',bookingRoutes);
+app.use('/api/admin',adminRoutes);
+
+
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`, req.body);

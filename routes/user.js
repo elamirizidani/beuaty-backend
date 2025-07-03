@@ -5,6 +5,60 @@ const Product = require('../models/Product');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // User buys a product
+
+
+const getClientOrders = async () => {
+  try {
+    const orders = await User.aggregate([
+      { $unwind: "$purchaseHistory" }, // Break down the purchaseHistory array
+      { 
+        $lookup: { // Join with products collection
+          from: "products",
+          localField: "purchaseHistory.productId",
+          foreignField: "_id",
+          as: "productDetails"
+        }
+      },
+      { $unwind: "$productDetails" }, // Since lookup returns an array
+      { 
+        $project: { // Shape the output
+          userId: "$_id",
+          userName: "$name",
+          userEmail: "$email",
+          productId: "$purchaseHistory.productId",
+          productName: "$productDetails.name",
+          quantity: "$purchaseHistory.quantity",
+          date: "$purchaseHistory.date",
+          _id: 0
+        }
+      },
+      { $sort: { date: -1 } } // Sort by most recent
+    ]);
+    
+    return orders;
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    throw error;
+  }
+};
+
+
+
+
+router.get('/profile', authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId).select('-password'); // exclude password
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 router.post('/purchase', authMiddleware, async (req, res) => {
   const userId = req.user.id;
   const { productId, quantity } = req.body;
@@ -102,6 +156,49 @@ router.get('/cart', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.aggregate([
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          email: 1,
+          role: 1,
+          createdAt: 1,
+          lastPurchase: { $max: "$purchaseHistory.date" },
+          totalPurchases: { $size: "$purchaseHistory" },
+          totalSpent: {
+            $sum: {
+              $map: {
+                input: "$purchaseHistory",
+                as: "purchase",
+                in: { $multiply: ["$$purchase.quantity", "$$purchase.price"] }
+              }
+            }
+          }
+        }
+      },
+      { $sort: { createdAt: -1 } }
+    ]);
+
+    res.json(users);
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.get('/orders', async (req, res) => {
+  try {
+    const orders = await getClientOrders();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching orders" });
   }
 });
 
