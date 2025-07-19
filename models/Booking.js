@@ -1,17 +1,3 @@
-// const mongoose = require('mongoose');
-
-// const bookingSchema = new mongoose.Schema({
-//   name: String,
-//   email: String,
-//   date: String,
-//   time: String,
-//   service: String,
-//   createdAt: { type: Date, default: Date.now }
-// });
-
-// module.exports = mongoose.model('Booking', bookingSchema);
-
-
 
 const mongoose = require('mongoose');
 
@@ -34,14 +20,6 @@ const bookingSchema = new mongoose.Schema({
   serviceType: {
     type: String,
     required: true,
-    // enum: [
-    //   'Hair Styling',
-    //   'Hair Cut & Hair Styling',
-    //   'Hair Colouring',
-    //   'Blowdry / Orising',
-    //   'Hair Extension',
-    //   'Make-Up'
-    // ]
   },
   date: {
     type: String, // or Date, if you're storing as a JS Date

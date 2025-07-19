@@ -9,6 +9,7 @@ const productRoutes = require('./routes/products');
 const recommendationRoutes = require('./routes/recommendations');
 const bookingRoutes = require('./routes/booking');
 const adminRoutes = require('./routes/admin');
+const helpsRoutes = require('./routes/helps');
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use('/api/user', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/bookings',bookingRoutes);
+app.use('/api/helps',helpsRoutes);
+
 app.use('/api/admin',adminRoutes);
 
 
