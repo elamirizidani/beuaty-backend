@@ -5,6 +5,16 @@ const { sendReminderEmail } = require('../services/reminderService');
 
 // POST /api/booking — Create a new booking
 
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
 
 router.get('/', async (req, res) => {
   try {
@@ -46,7 +56,6 @@ router.post('/create', async (req, res) => {
     });
 
     await newBooking.save();
-
     await sendConfirmationEmail(newBooking);
 
     res.status(201).json({

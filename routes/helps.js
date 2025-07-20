@@ -1,7 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const Helps = require('../models/Helps');
+const nodemailer = require('nodemailer');
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 
 router.get('/', async (req, res) => {
@@ -37,6 +45,7 @@ router.post('/create', async (req, res) => {
     });
 
     await newHelps.save();
+    await sendConfirmationEmail(newHelps);
 
     res.status(201).json({
       message: 'Helps submitted successfully!',
@@ -47,4 +56,23 @@ router.post('/create', async (req, res) => {
     res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 });
+
+
+async function sendConfirmationEmail(helper) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: helper.email,
+    subject: helper.about,
+    html: helper.message
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Confirmation email sent to ${helper.email}`);
+  } catch (error) {
+    console.error('Error sending confirmation email:', error);
+  }
+}
+
+
 module.exports = router;
