@@ -13,6 +13,15 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Product.distinct('category');
+    res.json(categories.filter(category => category != null));
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+})
+
 // Get product by id
 router.get('/:id', async (req, res) => {
   try {
@@ -58,5 +67,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
 
 module.exports = router;

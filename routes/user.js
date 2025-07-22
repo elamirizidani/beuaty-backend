@@ -108,7 +108,7 @@ router.post('/cart/add', authMiddleware, async (req, res) => {
 
     if (cartItem) {
       // Update quantity
-      cartItem.quantity += quantity;
+      cartItem.quantity = quantity;
     } else {
       // Add new item
       user.cart.push({ productId, quantity });

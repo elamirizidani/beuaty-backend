@@ -8,6 +8,8 @@ const userRoutes = require('./routes/user');
 const productRoutes = require('./routes/products');
 const recommendationRoutes = require('./routes/recommendations');
 const bookingRoutes = require('./routes/booking');
+
+const postsRoutes = require('./routes/posts');
 const adminRoutes = require('./routes/admin');
 const helpsRoutes = require('./routes/helps');
 
@@ -33,6 +35,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/bookings',bookingRoutes);
+app.use('/api/posts',postsRoutes);
 app.use('/api/helps',helpsRoutes);
 
 app.use('/api/admin',adminRoutes);
