@@ -7,8 +7,12 @@ const upload = multer({ dest: 'uploads/' });
 // Create posts
 router.post('/', upload.single('image'), async (req, res) => {
   try {
+
+    console.log('Request file:', req.file); // Add this to debug
+    console.log('Request body:', req.body); // Add this to debug
+
     const { title, content, published } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const imageUrl = req.file ? `../uploads/${req.file.filename}` : null;
 
     const posts = new Posts({
       title,
