@@ -10,13 +10,15 @@ router.post('/create-payment-intent', async (req, res) => {
     const { amount, currency = 'usd', metadata = {} } = req.body;
     
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Stripe uses cents
+      amount: amount * 100, // Stripe uses cents
       currency,
       metadata: {
         ...metadata,
         idempotencyKey: uuidv4() // Prevent duplicate charges
       }
     });
+
+// console.log("paymentIntent",paymentIntent)
 
     res.json({
       clientSecret: paymentIntent.client_secret

@@ -59,32 +59,83 @@ router.get('/profile', authMiddleware, async (req, res) => {
   }
 });
 
+// router.post('/purchase', authMiddleware, async (req, res) => {
+//   const userId = req.user.id;
+//   const { productId, quantity } = req.body;
+
+//   if (!productId || !quantity || quantity < 1) {
+//     return res.status(400).json({ message: 'Product ID and quantity (>=1) required' });
+//   }
+
+//   try {
+//     const product = await Product.findById(productId);
+//     if (!product) return res.status(404).json({ message: 'Product not found' });
+
+//     const user = await User.findById(userId);
+//     if (!user) return res.status(404).json({ message: 'User not found' });
+
+//     // Add purchase to user's purchaseHistory
+//     user.purchaseHistory.push({
+//       productId,
+//       quantity,
+//       date: new Date()
+//     });
+
+//     await user.save();
+
+//     res.json({ message: 'Purchase recorded successfully' });
+//   } catch (err) {
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
+
 router.post('/purchase', authMiddleware, async (req, res) => {
   const userId = req.user.id;
-  const { productId, quantity } = req.body;
+  const { items } = req.body; // Now accepts array of items
 
-  if (!productId || !quantity || quantity < 1) {
-    return res.status(400).json({ message: 'Product ID and quantity (>=1) required' });
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ message: 'Items array required' });
   }
 
   try {
-    const product = await Product.findById(productId);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Add purchase to user's purchaseHistory
-    user.purchaseHistory.push({
-      productId,
-      quantity,
-      date: new Date()
+    // Verify all products exist and get their prices
+    const productIds = items.map(item => item.productId);
+    const products = await Product.find({ _id: { $in: productIds } });
+    
+    if (products.length !== items.length) {
+      return res.status(400).json({ message: 'Some products not found' });
+    }
+
+    // Create purchase records
+    const purchaseRecords = items.map(item => {
+      const product = products.find(p => p._id.toString() === item.productId);
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        price: product.price, // Store price at time of purchase
+        date: new Date()
+      };
     });
 
+    // Add purchases to history
+    user.purchaseHistory.push(...purchaseRecords);
+    
+    // Clear the cart after successful purchase
+    user.cart = [];
+    
     await user.save();
 
-    res.json({ message: 'Purchase recorded successfully' });
+    res.json({ 
+      success: true,
+      message: 'Purchase recorded successfully',
+      purchaseHistory: user.purchaseHistory
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -156,6 +207,34 @@ router.get('/cart', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/cart/empty', authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Empty the cart by setting it to an empty array
+    user.cart = [];
+    await user.save();
+
+    res.json({ 
+      success: true,
+      message: 'Cart emptied successfully',
+      cart: user.cart // Returns empty array
+    });
+  } catch (err) {
+    console.error('Error emptying cart:', err);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error while emptying cart' 
+    });
   }
 });
 
