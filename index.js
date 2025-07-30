@@ -12,6 +12,7 @@ const bookingRoutes = require('./routes/booking');
 const postsRoutes = require('./routes/posts');
 const adminRoutes = require('./routes/admin');
 const helpsRoutes = require('./routes/helps');
+const paymentRoutes = require('./routes/payments');
 
 const app = express();
 
@@ -37,8 +38,8 @@ app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/bookings',bookingRoutes);
 app.use('/api/posts',postsRoutes);
 app.use('/api/helps',helpsRoutes);
-
 app.use('/api/admin',adminRoutes);
+app.use('/api/payments',paymentRoutes);
 
 
 
