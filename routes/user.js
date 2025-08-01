@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const Product = require('../models/Product');
 const authMiddleware = require('../middleware/authMiddleware');
-
+const bcrypt = require('bcryptjs')
 // User buys a product
 
 
@@ -59,35 +59,6 @@ router.get('/profile', authMiddleware, async (req, res) => {
   }
 });
 
-// router.post('/purchase', authMiddleware, async (req, res) => {
-//   const userId = req.user.id;
-//   const { productId, quantity } = req.body;
-
-//   if (!productId || !quantity || quantity < 1) {
-//     return res.status(400).json({ message: 'Product ID and quantity (>=1) required' });
-//   }
-
-//   try {
-//     const product = await Product.findById(productId);
-//     if (!product) return res.status(404).json({ message: 'Product not found' });
-
-//     const user = await User.findById(userId);
-//     if (!user) return res.status(404).json({ message: 'User not found' });
-
-//     // Add purchase to user's purchaseHistory
-//     user.purchaseHistory.push({
-//       productId,
-//       quantity,
-//       date: new Date()
-//     });
-
-//     await user.save();
-
-//     res.json({ message: 'Purchase recorded successfully' });
-//   } catch (err) {
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// });
 
 
 router.post('/purchase', authMiddleware, async (req, res) => {
@@ -140,6 +111,48 @@ router.post('/purchase', authMiddleware, async (req, res) => {
   }
 });
 
+
+router.get('/purchases', authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId)
+      .populate({
+        path: 'purchaseHistory.productId',
+        select: 'name description image' // Include whatever product fields you need
+      })
+      .select('purchaseHistory'); // Only return purchase history
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Format the response
+    const purchases = user.purchaseHistory.map(purchase => ({
+      id: purchase._id,
+      date: purchase.date,
+      quantity: purchase.quantity,
+      
+      product: {
+        id: purchase.productId._id,
+        name: purchase.productId.name,
+        description: purchase.productId.description,
+        image: purchase.productId.image,
+        // price: purchase.productId.price,
+      },
+      status: purchase.status || 'completed' // Default status if not set
+    }));
+    res.json({
+      success: true,
+      count: purchases.length,
+      purchases
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
 
@@ -271,6 +284,79 @@ router.get('/users', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
+
+
+router.post('/change-password', authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  // Validate input
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({ 
+      success: false,
+      message: 'All fields are required' 
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ 
+      success: false,
+      message: 'New passwords do not match' 
+    });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ 
+      success: false,
+      message: 'Password must be at least 6 characters' 
+    });
+  }
+
+  try {
+    // Find user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+    }
+
+    // Verify current password (using bcrypt directly)
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Current password is incorrect' 
+      });
+    }
+
+    // Hash and update password
+    const salt = await bcrypt.genSalt(10);
+    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+    
+    // Update without modifying schema
+    await User.findByIdAndUpdate(userId, { 
+      passwordHash: newPasswordHash 
+    });
+
+    res.json({ 
+      success: true,
+      message: 'Password changed successfully' 
+    });
+
+  } catch (err) {
+    console.error('Password change error:', err);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error while changing password' 
+    });
+  }
+});
+
+
 
 router.get('/orders', async (req, res) => {
   try {
