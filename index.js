@@ -13,6 +13,8 @@ const postsRoutes = require('./routes/posts');
 const adminRoutes = require('./routes/admin');
 const helpsRoutes = require('./routes/helps');
 const paymentRoutes = require('./routes/payments');
+const reviewRoutes = require('./routes/reviews');
+
 
 const app = express();
 
@@ -40,7 +42,7 @@ app.use('/api/posts',postsRoutes);
 app.use('/api/helps',helpsRoutes);
 app.use('/api/admin',adminRoutes);
 app.use('/api/payments',paymentRoutes);
-
+app.use('/api/reviews', reviewRoutes);
 
 
 app.use((req, res, next) => {
