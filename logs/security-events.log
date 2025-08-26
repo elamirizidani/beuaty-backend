@@ -1,0 +1,17 @@
+{"ip":"::1","level":"warn","message":"Unauthenticated API access attempt","path":"/api/products","timestamp":"2025-08-26T08:38:28.006Z"}
+{"ip":"::1","level":"warn","message":"Unauthenticated API access attempt","path":"/api/reviews/latest","timestamp":"2025-08-26T08:38:28.031Z"}
+{"duration":111,"ip":"::1","level":"warn","message":"Error response","method":"POST","path":"/login","statusCode":400,"timestamp":"2025-08-26T08:38:42.904Z"}
+{"duration":13709,"ip":"::1","level":"warn","message":"Error response","method":"GET","path":"/suggest-new-products","statusCode":500,"timestamp":"2025-08-26T08:39:12.313Z"}
+{"duration":13709,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T08:39:12.313Z"}
+{"duration":10961,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T08:52:13.547Z"}
+{"duration":11915,"ip":"::1","level":"warn","message":"Error response","method":"GET","path":"/suggest-new-products","statusCode":500,"timestamp":"2025-08-26T08:54:40.375Z"}
+{"duration":11915,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T08:54:40.375Z"}
+{"duration":14089,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T08:54:42.697Z"}
+{"duration":12089,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:09:17.420Z"}
+{"duration":9282,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:10:04.617Z"}
+{"duration":11428,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:10:06.766Z"}
+{"duration":10117,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:10:36.071Z"}
+{"duration":11747,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:10:37.913Z"}
+{"duration":9780,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:11:11.423Z"}
+{"duration":11082,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:11:35.341Z"}
+{"duration":11633,"ip":"::1","level":"warn","message":"Slow request detected","method":"GET","path":"/suggest-new-products","timestamp":"2025-08-26T09:11:36.161Z"}

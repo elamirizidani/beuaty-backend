@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const PasswordResetToken = require('../models/PasswordResetToken');
@@ -8,6 +9,12 @@ const PasswordResetToken = require('../models/PasswordResetToken');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const nodemailer = require('nodemailer');
+
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // Only 3 password reset attempts per hour
+  message: { error: 'Too many password reset attempts' }
+});
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
